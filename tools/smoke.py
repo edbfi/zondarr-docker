@@ -1,5 +1,7 @@
 import hashlib,json,subprocess,sys,time,uuid
 from pathlib import Path
+import shutil, signal
+signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))
 tooling=Path(__file__).resolve().parent
 image=sys.argv[1];r=Path(sys.argv[2]).resolve();r.mkdir(parents=True,exist_ok=True);arch=sys.argv[3]
 name='zondarr-validation-'+arch+'-'+uuid.uuid4().hex[:8];volume=name;network=name+'-network'
@@ -54,6 +56,20 @@ try:
  result['passed']=True
  (r/'result.txt').write_text('PASS: native dual-service setup/migrations/keys/admin persistence/clean shutdown\n')
 finally:
- save_log('final');docker('stop','--time','20',name,check=False);docker('rm',name,check=False);docker('network','rm',network,check=False)
- (r/'runtime-result.json').write_text(json.dumps(result,indent=2))
+ try:
+  docker('stop','--time','15',name,check=False)
+  docker('rm','-f','-v',name,check=False)
+  docker('volume','rm',volume,check=False)
+  docker('network','rm',network,check=False)
+  assert not docker('container','ls','-a','--filter','name=^/'+name+'$','--format','{{.Names}}'), 'container survived cleanup'
+  assert volume not in docker('volume','ls','--format','{{.Name}}').splitlines(), 'volume survived cleanup'
+  assert network not in docker('network','ls','--format','{{.Name}}').splitlines(), 'network survived cleanup'
+  result['cleanup_passed']=True
+ finally:
+  for backup in r.glob(name+'-backup'):
+   shutil.rmtree(backup)
+  for log in r.glob(name+'*.log'):
+   log.unlink()
+  (r/'runtime-result.json').write_text(json.dumps(result,indent=2))
+
 print(json.dumps(result,indent=2))

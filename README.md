@@ -81,3 +81,13 @@ Database migrations (Alembic) run automatically on every container startup.
 
 - **Docker Image**: Licensed under the GPL-3.0 License. See the [LICENSE](https://github.com/edbfi/zondarr-docker/blob/nightly/LICENSE) file for details.
 - **Zondarr Application**: Licensed under the AGPL-3.0 License. See the [zondarr repository](https://github.com/edbfi/zondarr) for details.
+
+## Runtime fixture cleanup
+
+Native amd64/arm64 CI uses disposable state and local container networking. Its
+always-running aggregate requires both image jobs and hygiene. Runtime cleanup
+removes the test containers, volumes and networks, checks their absence, and
+deletes generated keys and database backups. Runner cancellation enters the same
+cleanup path. Artifacts use an explicit allowlist: raw logs, databases and secret
+files are never uploaded. Live media services and VPN paths remain outside this
+fixture's coverage.

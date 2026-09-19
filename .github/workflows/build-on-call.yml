@@ -89,7 +89,15 @@ jobs:
         if: always()
         with:
           name: ${{ inputs.image }}-${{ matrix.arch }}
-          path: evidence/
+          # Explicit allowlist excludes raw logs, databases and ephemeral keys.
+          path: |
+            evidence/metadata.json
+            evidence/build-args.txt
+            evidence/runtime-result.json
+            evidence/result.txt
+            evidence/packages.txt
+            evidence/python-packages.json
+            evidence/image.tar
           if-no-files-found: error
           retention-days: 7
 defaults:
