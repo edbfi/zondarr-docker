@@ -14,7 +14,7 @@
 
 Zondarr is a full-stack application with a Python/Litestar backend and SvelteKit/Bun frontend. This Docker image runs both services using s6-overlay process supervision.
 
-Only nightly is published; no stable application release has been selected. Builds pin the application revision, source checksum, Bun, uv, Python and native base images.
+Only nightly images have been published; no stable application release has been selected. Builds pin the application revision, source checksum, Bun, uv, Python and native base images.
 
 ## Docker Compose
 
@@ -76,6 +76,10 @@ All persistent data is stored in `/config/data/`:
 Back up the entire `/config` volume before replacing the container. Preserve any explicitly supplied `SECRET_KEY`. The frontend setup page uses the bootstrap token for first-admin creation; only the frontend port needs publishing. Set `ORIGIN` and `CSRF_ORIGIN` to your public URL behind a reverse proxy, and enable `SECURE_COOKIES` for HTTPS.
 
 Database migrations (Alembic) run automatically on every container startup.
+
+## Building
+
+Run `./build.sh amd64` or `./build.sh arm64` from the repository root to build the image locally. It needs `docker` and `jq`, passes the `meta.json` keys as build arguments, and the Dockerfiles verify the source archive against `source_sha256`. No workflow in this repository builds or publishes images.
 
 ## License
 
