@@ -11,9 +11,12 @@ RUN mkdir /build && \
     curl -fsSL "https://github.com/engels74/zondarr/archive/${VERSION}.tar.gz" \
       | tar xzf - -C "/build" --strip-components=1
 WORKDIR /build/frontend
+# bun install runs the root prepare script even with --production, and it needs dev
+# dependencies (svelte-kit). Remove it before the production install.
 RUN bun install --frozen-lockfile && \
     bun run build && \
     rm -rf node_modules && \
+    bun -e 'const p = await Bun.file("package.json").json(); delete p.scripts.prepare; await Bun.write("package.json", JSON.stringify(p));' && \
     bun install --production --frozen-lockfile
 
 # ── Stage 2: Backend Builder ───────────────────────────────────────
