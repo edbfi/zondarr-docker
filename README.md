@@ -10,6 +10,11 @@ and the [maintained nightly README](https://github.com/edbfi/zondarr-docker/blob
 The historical Compose example has been removed to avoid recommending obsolete
 image names and runtime settings.
 
+Images built from a Zondarr version on SvelteKit 3 start the frontend through
+`scripts/serve.ts`. Serving plain HTTP then requires `ORIGIN` set to the public
+URL (for example `ORIGIN=http://192.168.1.10:3000`); otherwise every write is
+rejected with 403.
+
 ## License
 
 - Docker packaging: [GPL-3.0 license](LICENSE).

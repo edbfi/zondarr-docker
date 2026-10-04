@@ -56,6 +56,8 @@ COPY --from=backend-builder /build/backend/pyproject.toml "${APP_DIR}/backend/py
 COPY --from=frontend-builder /build/frontend/build "${APP_DIR}/frontend/build"
 COPY --from=frontend-builder /build/frontend/node_modules "${APP_DIR}/frontend/node_modules"
 COPY --from=frontend-builder /build/frontend/package.json "${APP_DIR}/frontend/package.json"
+# The production entry: it fronts the adapter when ORIGIN is set, else loads build/index.js.
+COPY --from=frontend-builder /build/frontend/scripts/serve.ts "${APP_DIR}/frontend/scripts/serve.ts"
 
 # Data directory + permissions
 RUN mkdir -p "${CONFIG_DIR}/data" && \

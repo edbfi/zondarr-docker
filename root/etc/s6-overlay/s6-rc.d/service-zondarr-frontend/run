@@ -9,4 +9,5 @@ cd "${APP_DIR}/frontend" || exit 1
 export HOST="0.0.0.0"
 export PORT="${FRONTEND_PORT}"
 
-exec s6-setuidgid hotio bun ./build/index.js
+# scripts/serve.ts fronts the adapter when ORIGIN is set; without it, it loads build/index.js.
+exec s6-setuidgid hotio bun ./scripts/serve.ts
