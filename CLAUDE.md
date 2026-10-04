@@ -6,12 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 `release` (the default branch) builds the latest zondarr release tag; `nightly` builds every commit
 to zondarr's `main`. On both branches `call-build` builds and publishes an image on every push, and
-the hourly `call-update` refreshes `meta.json` and pushes, which triggers a build. Apart from the
-docs and `pullfrog.yml`, the branches differ only in `meta.json`'s channel values (`description`,
-`latest`, `version`, `version__command`) and the bot-managed `packages.txt`; the callers,
-`build.sh`, both Dockerfiles and the s6 tree under `root/` are the same. Packaging fixes belong on
-both branches: run `git diff origin/release origin/nightly -- <path>` before porting anything in
-either direction.
+the hourly `call-update` refreshes `meta.json` and pushes, which triggers a build. zondarr has no
+release tag yet, so on `release` `version` stays `"null"`, `version__command` finds nothing and
+every `call-build` run fails at `archive/null.tar.gz`; that is expected until the first tag. Apart
+from the docs and `pullfrog.yml`, the branches differ only in `meta.json`'s channel values
+(`description`, `latest`, `version`, `version__command`) and the bot-managed `packages.txt`; the
+callers, `build.sh`, both Dockerfiles and the s6 tree under `root/` are the same. Packaging fixes
+belong on both branches: run `git diff origin/release origin/nightly -- <path>` before porting
+anything in either direction.
 
 Packaging only: both Dockerfiles download the app source from
 `https://github.com/edbfi/zondarr/archive/${VERSION}.tar.gz` at build time. No app code lives here.

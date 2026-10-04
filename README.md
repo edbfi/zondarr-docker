@@ -6,7 +6,7 @@ image as a stable release.
 
 For current installation instructions, Docker Compose examples and published
 image tags, use the [Zondarr container documentation](https://web.edb.fi/containers/zondarr/)
-and the [maintained nightly README](https://github.com/edbfi/zondarr-docker/blob/nightly/README.md).
+and the [nightly README](https://github.com/edbfi/zondarr-docker/blob/nightly/README.md).
 The historical Compose example has been removed to avoid recommending obsolete
 image names and runtime settings.
 
