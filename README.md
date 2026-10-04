@@ -14,7 +14,7 @@
 
 Zondarr is a full-stack application with a Python/Litestar backend and SvelteKit/Bun frontend. This Docker image runs both services using s6-overlay process supervision.
 
-Only nightly images have been published; no stable application release has been selected. Builds pin the application revision, source checksum, Bun, uv, Python and native base images.
+Nightly builds from the latest commit on `main`. The `release` branch builds the latest zondarr release tag; none has been published yet.
 
 ## Docker Compose
 
@@ -86,7 +86,9 @@ Database migrations (Alembic) run automatically on every container startup.
 
 ## Building
 
-Run `./build.sh amd64` or `./build.sh arm64` from the repository root to build the image locally. It needs `docker` and `jq`, passes the `meta.json` keys as build arguments, and the Dockerfiles verify the source archive against `source_sha256`. No workflow in this repository builds or publishes images.
+Images are built and published by the Hotio workflows in `edbfi/base-image`. `.github/workflows/call-build.yml` runs on every push (except to a branch named `workflows`) and builds linux/amd64 and linux/arm64, starts each image once with no environment and requests `http://localhost:3000` (`test_url`), then publishes `ghcr.io/edbfi/zondarr-docker:<branch>`, `<branch>-<commit>` and `<branch>-<version>`. `.github/workflows/call-update.yml` runs hourly: it evaluates the `__command` keys in `meta.json` (the latest `main` commit as `version`, the current `alpinevpn` base image as `upstream_tag_sha`) and commits any change, which triggers a new build.
+
+To build locally, run `./build.sh amd64` or `./build.sh arm64` from the repository root (needs `docker` and `jq`); `./build.sh update` refreshes `meta.json` the way the hourly workflow does.
 
 ## License
 
