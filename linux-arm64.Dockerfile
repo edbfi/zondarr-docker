@@ -40,9 +40,9 @@ ENV IMAGE_STATS=${IMAGE_STATS} \
     NODE_ENV=production \
     FRONTEND_PORT=3000 \
     BACKEND_PORT=8000 \
-    WEBUI_PORTS="3000/tcp,3000/udp,8000/tcp,8000/udp" \
+    WEBUI_PORTS="3000/tcp,3000/udp" \
     SHUTDOWN_TIMEOUT=5
-EXPOSE ${FRONTEND_PORT} ${BACKEND_PORT}
+EXPOSE ${FRONTEND_PORT}
 
 COPY --from=frontend-builder /usr/local/bin/bun /usr/local/bin/bun
 
