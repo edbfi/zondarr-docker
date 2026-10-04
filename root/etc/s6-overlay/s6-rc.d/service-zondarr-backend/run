@@ -13,6 +13,10 @@ exec s6-setuidgid hotio \
     --interface asgi \
     --host 0.0.0.0 \
     --port "${BACKEND_PORT}" \
-    --workers 1 \
+    --workers "${GRANIAN_WORKERS:-1}" \
+    --runtime-mode st \
+    --backpressure 16 \
+    --respawn-failed-workers \
     --workers-kill-timeout 4 \
+    --workers-lifetime 6h \
     --log-level info
