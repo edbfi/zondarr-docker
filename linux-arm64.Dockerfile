@@ -28,7 +28,7 @@ RUN mkdir /build && \
       | tar xzf - -C "/build" --strip-components=1
 WORKDIR /build/backend
 ENV UV_PYTHON_INSTALL_DIR=/opt/python
-RUN uv sync --python 3.14 --no-dev --frozen --compile-bytecode
+RUN uv sync --python 3.14 --no-dev --frozen --compile-bytecode --no-editable
 
 # ── Stage 3: Runtime ───────────────────────────────────────────────
 FROM ${UPSTREAM_IMAGE}:${UPSTREAM_TAG_SHA}
