@@ -89,6 +89,19 @@ fi
 # browser to talk directly to the backend (requires CORS_ORIGINS too).
 # Do NOT set a default here — empty enables the proxy.
 
+# ── CSRF_ORIGIN default ─────────────────────────────────────────────
+# The backend rejects browser writes whose Origin differs from CSRF_ORIGIN. When
+# ORIGIN (the address people open) is set and CSRF_ORIGIN is not, use ORIGIN so
+# one variable is enough. CSRF_ORIGIN is never derived from anything else.
+ORIGIN_TRIMMED="${ORIGIN#"${ORIGIN%%[![:space:]]*}"}"
+ORIGIN_TRIMMED="${ORIGIN_TRIMMED%"${ORIGIN_TRIMMED##*[![:space:]]}"}"
+if [[ -z "${CSRF_ORIGIN}" && -n "${ORIGIN_TRIMMED}" ]]; then
+    CSRF_ORIGIN="${ORIGIN_TRIMMED}"
+    export CSRF_ORIGIN
+    printf '%s' "${CSRF_ORIGIN}" > /var/run/s6/container_environment/CSRF_ORIGIN
+    log_inf "CSRF_ORIGIN defaulting to ORIGIN"
+fi
+
 # ── Alembic database migration ─────────────────────────────────────
 log_inf "Running database migrations..."
 cd "${APP_DIR}/backend" || exit 1
