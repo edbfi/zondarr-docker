@@ -8,9 +8,9 @@ set -e
 
 umask "${UMASK}"
 
-# Update WEBUI_PORTS if ports were changed from defaults
-if [[ "${FRONTEND_PORT}" != "3000" || "${BACKEND_PORT}" != "8000" ]]; then
-    WEBUI_PORTS="${FRONTEND_PORT}/tcp,${FRONTEND_PORT}/udp,${BACKEND_PORT}/tcp,${BACKEND_PORT}/udp"
+# Update WEBUI_PORTS if the frontend port was changed from its default
+if [[ "${FRONTEND_PORT}" != "3000" ]]; then
+    WEBUI_PORTS="${FRONTEND_PORT}/tcp,${FRONTEND_PORT}/udp"
     printf '%s' "${WEBUI_PORTS}" > /var/run/s6/container_environment/WEBUI_PORTS
 fi
 
