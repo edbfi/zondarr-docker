@@ -14,7 +14,7 @@
 
 Zondarr is a full-stack application with a Python/Litestar backend and SvelteKit/Bun frontend. This Docker image runs both services using s6-overlay process supervision.
 
-Only nightly is published; no stable application release has been selected. Builds pin the application revision, source checksum, Bun, uv, Python and native base images.
+Only nightly images have been published; no stable application release has been selected. Builds pin the application revision, source checksum, Bun, uv, Python and native base images.
 
 ## Docker Compose
 
@@ -77,17 +77,11 @@ Back up the entire `/config` volume before replacing the container. Preserve any
 
 Database migrations (Alembic) run automatically on every container startup.
 
+## Building
+
+Run `./build.sh amd64` or `./build.sh arm64` from the repository root to build the image locally. It needs `docker` and `jq`, passes the `meta.json` keys as build arguments, and the Dockerfiles verify the source archive against `source_sha256`. No workflow in this repository builds or publishes images.
+
 ## License
 
 - **Docker Image**: Licensed under the GPL-3.0 License. See the [LICENSE](https://github.com/edbfi/zondarr-docker/blob/nightly/LICENSE) file for details.
 - **Zondarr Application**: Licensed under the AGPL-3.0 License. See the [zondarr repository](https://github.com/edbfi/zondarr) for details.
-
-## Runtime fixture cleanup
-
-Native amd64/arm64 CI uses disposable state and local container networking. Its
-always-running aggregate requires both image jobs and hygiene. Runtime cleanup
-removes the test containers, volumes and networks, checks their absence, and
-deletes generated keys and database backups. Runner cancellation enters the same
-cleanup path. Artifacts use an explicit allowlist: raw logs, databases and secret
-files are never uploaded. Live media services and VPN paths remain outside this
-fixture's coverage.
