@@ -24,7 +24,7 @@ number of proxies, default `1`) only when every request goes through that proxy.
 `PROTOCOL_HEADER` and `HOST_HEADER` are for setups without `ORIGIN`, behind a trusted
 proxy. `SHUTDOWN_TIMEOUT` defaults to `5` seconds so a plain `docker stop` (10 s)
 finishes cleanly; if you raise it, raise the stop timeout too (`docker stop -t`,
-`stop_grace_period`).
+`stop_grace_period`). Publish only the frontend port; the backend port is internal.
 
 ## License
 
