@@ -89,6 +89,34 @@ fi
 # browser to talk directly to the backend (requires CORS_ORIGINS too).
 # Do NOT set a default here — empty enables the proxy.
 
+# ── CSRF_ORIGIN default ─────────────────────────────────────────────
+# The backend rejects browser writes whose Origin differs from CSRF_ORIGIN. When
+# ORIGIN (the address people open) is set and CSRF_ORIGIN is not, use ORIGIN so
+# one variable is enough. CSRF_ORIGIN is never derived from anything else.
+# ORIGIN is made canonical as the frontend does, because browsers send that
+# form: surrounding whitespace trimmed, scheme and host lowercase, :80 dropped
+# for http and :443 for https, one trailing / dropped. A value of any other
+# shape is copied trimmed; the frontend refuses to start with it anyway.
+ORIGIN_CANONICAL="${ORIGIN#"${ORIGIN%%[![:space:]]*}"}"
+ORIGIN_CANONICAL="${ORIGIN_CANONICAL%"${ORIGIN_CANONICAL##*[![:space:]]}"}"
+origin_pattern='^([A-Za-z][A-Za-z0-9+.-]*)://([^]/?#@:[]+|\[[^]/?#@[]+\])(:([0-9]*))?/?$'
+if [[ "${ORIGIN_CANONICAL}" =~ ${origin_pattern} ]]; then
+    origin_scheme="${BASH_REMATCH[1],,}"
+    origin_host="${BASH_REMATCH[2],,}"
+    origin_port="${BASH_REMATCH[4]}"
+    if [[ -z "${origin_port}" || "${origin_scheme}:${origin_port}" == "http:80" || "${origin_scheme}:${origin_port}" == "https:443" ]]; then
+        ORIGIN_CANONICAL="${origin_scheme}://${origin_host}"
+    else
+        ORIGIN_CANONICAL="${origin_scheme}://${origin_host}:${origin_port}"
+    fi
+fi
+if [[ -z "${CSRF_ORIGIN}" && -n "${ORIGIN_CANONICAL}" ]]; then
+    CSRF_ORIGIN="${ORIGIN_CANONICAL}"
+    export CSRF_ORIGIN
+    printf '%s' "${CSRF_ORIGIN}" > /var/run/s6/container_environment/CSRF_ORIGIN
+    log_inf "CSRF_ORIGIN defaulting to ORIGIN"
+fi
+
 # ── Alembic database migration ─────────────────────────────────────
 log_inf "Running database migrations..."
 cd "${APP_DIR}/backend" || exit 1

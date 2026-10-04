@@ -43,11 +43,15 @@ RUN uv sync --python 3.14.7 --no-dev --frozen --compile-bytecode --no-editable
 
 FROM ${UPSTREAM_IMAGE}@${UPSTREAM_DIGEST_ARM64}
 ARG IMAGE_STATS
+# Docker stops a container after 10 s by default; the Hotio s6 teardown after the app exits
+# takes about 3.3 s, so the app may drain requests for 5 s and still exit in time. Override
+# with -e SHUTDOWN_TIMEOUT=<seconds> together with a longer stop timeout (docker stop -t).
 ENV IMAGE_STATS=${IMAGE_STATS} \
     NODE_ENV=production \
     FRONTEND_PORT=3000 \
     BACKEND_PORT=8000 \
-    WEBUI_PORTS="3000/tcp,3000/udp,8000/tcp,8000/udp"
+    WEBUI_PORTS="3000/tcp,3000/udp,8000/tcp,8000/udp" \
+    SHUTDOWN_TIMEOUT=5
 EXPOSE ${FRONTEND_PORT} ${BACKEND_PORT}
 
 COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
@@ -64,6 +68,8 @@ COPY --from=backend-builder /build/backend/pyproject.toml "${APP_DIR}/backend/py
 COPY --from=frontend-builder /build/frontend/build "${APP_DIR}/frontend/build"
 COPY --from=frontend-production-dependencies /build/frontend/node_modules "${APP_DIR}/frontend/node_modules"
 COPY --from=source /source/frontend/package.json "${APP_DIR}/frontend/package.json"
+# The production entry: it fronts the adapter when ORIGIN is set, else loads build/index.js.
+COPY --from=source /source/frontend/scripts/serve.ts "${APP_DIR}/frontend/scripts/serve.ts"
 
 RUN mkdir -p "${CONFIG_DIR}/data" && \
     chmod -R u=rwX,go=rX "${APP_DIR}"
