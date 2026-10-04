@@ -71,6 +71,8 @@ services:
 | `3000` | Frontend — SvelteKit SSR server (Bun) |
 | `8000` | Backend — Litestar API server (Granian) |
 
+Publish only the frontend port; the backend port is internal to the container.
+
 ## Data Persistence
 
 All persistent data is stored in `/config/data/`:
