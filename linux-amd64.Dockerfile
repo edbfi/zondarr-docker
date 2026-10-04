@@ -43,11 +43,15 @@ RUN uv sync --python 3.14.7 --no-dev --frozen --compile-bytecode --no-editable
 
 FROM ${UPSTREAM_IMAGE}@${UPSTREAM_DIGEST_AMD64}
 ARG IMAGE_STATS
+# Docker stops a container after 10 s by default; the Hotio s6 teardown after the app exits
+# takes about 3.3 s, so the app may drain requests for 5 s and still exit in time. Override
+# with -e SHUTDOWN_TIMEOUT=<seconds> together with a longer stop timeout (docker stop -t).
 ENV IMAGE_STATS=${IMAGE_STATS} \
     NODE_ENV=production \
     FRONTEND_PORT=3000 \
     BACKEND_PORT=8000 \
-    WEBUI_PORTS="3000/tcp,3000/udp,8000/tcp,8000/udp"
+    WEBUI_PORTS="3000/tcp,3000/udp,8000/tcp,8000/udp" \
+    SHUTDOWN_TIMEOUT=5
 EXPOSE ${FRONTEND_PORT} ${BACKEND_PORT}
 
 COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
