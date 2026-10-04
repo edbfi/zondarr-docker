@@ -32,6 +32,7 @@ services:
       - TZ=Etc/UTC
       # - SECRET_KEY=           # Auto-generated on first run, persisted to /config/data/.secret_key
       # - DATABASE_URL=         # Default: SQLite at /config/data/zondarr.db
+      # - ORIGIN=http://192.168.1.10:3000  # Public URL of the frontend; required for plain HTTP
       # - PUBLIC_API_URL=       # Leave empty to use the same-origin API proxy
       # - SECURE_COOKIES=true   # Set when serving over HTTPS (enforces Secure flag on cookies)
       # - CSRF_ORIGIN=https://zondarr.example.com  # Required for HTTPS with a custom domain
@@ -52,6 +53,7 @@ services:
 | `TZ` | `Etc/UTC` | Timezone |
 | `SECRET_KEY` | *(auto-generated)* | JWT signing key. Auto-generated on first run and persisted to `/config/data/.secret_key`. Set explicitly to override. |
 | `DATABASE_URL` | `sqlite+aiosqlite:///config/data/zondarr.db` | Database connection string. Supports SQLite (default) and PostgreSQL. |
+| `ORIGIN` | *(none)* | Public origin of the frontend, for example `http://192.168.1.10:3000`. **Required when serving plain HTTP**: without it the frontend assumes `https://<Host>` and rejects every write (sign-in, sign-out, saves) with 403, and logs a startup warning. May stay unset behind an HTTPS reverse proxy that preserves `Host`. Must be a bare `http(s)` origin (no path or credentials), or the frontend does not start. Use the same value as `CSRF_ORIGIN`. |
 | `PUBLIC_API_URL` | *(empty)* | Leave empty to use the same-origin frontend API proxy. |
 | `INTERNAL_API_URL` | `http://localhost:8000` | Internal backend URL, derived from `BACKEND_PORT` by default. |
 | `SECURE_COOKIES` | `false` | Set to `true` when serving over HTTPS to enforce the Secure flag on cookies. |
@@ -73,7 +75,7 @@ All persistent data is stored in `/config/data/`:
 - `.secret_key` — Auto-generated JWT signing key
 - `.bootstrap_token` — Persistent first-admin setup token
 
-Back up the entire `/config` volume before replacing the container. Preserve any explicitly supplied `SECRET_KEY`. The frontend setup page uses the bootstrap token for first-admin creation; only the frontend port needs publishing. Set `ORIGIN` and `CSRF_ORIGIN` to your public URL behind a reverse proxy, and enable `SECURE_COOKIES` for HTTPS.
+Back up the entire `/config` volume before replacing the container. Preserve any explicitly supplied `SECRET_KEY`. The frontend setup page uses the bootstrap token for first-admin creation; only the frontend port needs publishing. Set `ORIGIN` and `CSRF_ORIGIN` to your public URL when serving plain HTTP or behind a reverse proxy that does not preserve `Host`, and enable `SECURE_COOKIES` for HTTPS.
 
 Database migrations (Alembic) run automatically on every container startup.
 

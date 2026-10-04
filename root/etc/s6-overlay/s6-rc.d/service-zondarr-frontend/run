@@ -20,4 +20,5 @@ for i in $(seq 1 30); do
     sleep 1
 done
 
-exec s6-setuidgid hotio bun ./build/index.js
+# scripts/serve.ts fronts the adapter when ORIGIN is set; without it, it loads build/index.js.
+exec s6-setuidgid hotio bun ./scripts/serve.ts
