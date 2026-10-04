@@ -56,7 +56,7 @@ commit it.
   `printf '%s' "${VAR}" > /var/run/s6/container_environment/VAR`, as `init-setup-app/run` does.
 - Long-running services drop privileges with `exec s6-setuidgid hotio ...`. Don't run the app as root.
 - Changing a default port touches `ENV FRONTEND_PORT`/`BACKEND_PORT`/`WEBUI_PORTS` in both
-  Dockerfiles, the `!= "3000" || != "8000"` guard in `init-setup-app/run`, and `test_url` in
+  Dockerfiles, the `FRONTEND_PORT != "3000"` guard in `init-setup-app/run`, and `test_url` in
   `meta.json`.
 - `Modified: meta.json` commits come from the bot. Human commits use Conventional Commits.
 
