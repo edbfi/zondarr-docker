@@ -7,5 +7,5 @@ on:
 
 jobs:
   call:
-    uses: engels74/base-image/.github/workflows/update-on-call.yml@workflows
+    uses: edbfi/base-image/.github/workflows/update-on-call.yml@workflows
     secrets: inherit
