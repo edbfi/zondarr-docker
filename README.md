@@ -35,7 +35,7 @@ services:
       # - ORIGIN=http://192.168.1.10:3000  # Public URL of the frontend; required for plain HTTP
       # - PUBLIC_API_URL=       # Leave empty to use the same-origin API proxy
       # - SECURE_COOKIES=true   # Set when serving over HTTPS (enforces Secure flag on cookies)
-      # - CSRF_ORIGIN=https://zondarr.example.com  # Required for HTTPS with a custom domain
+      # - CSRF_ORIGIN=https://zondarr.example.com  # Defaults to ORIGIN; set it only without ORIGIN or to differ
       # - PLEX_API_TIMEOUT_SECONDS=30  # Timeout for Plex API calls (min: 5)
       # - GRANIAN_WORKERS=1            # Worker processes (keep 1 for SQLite)
     volumes:
@@ -53,13 +53,16 @@ services:
 | `TZ` | `Etc/UTC` | Timezone |
 | `SECRET_KEY` | *(auto-generated)* | JWT signing key. Auto-generated on first run and persisted to `/config/data/.secret_key`. Set explicitly to override. |
 | `DATABASE_URL` | `sqlite+aiosqlite:///config/data/zondarr.db` | Database connection string. Supports SQLite (default) and PostgreSQL. |
-| `ORIGIN` | *(none)* | Public origin of the frontend, for example `http://192.168.1.10:3000`. **Required when serving plain HTTP**: without it the frontend assumes `https://<Host>` and rejects every write (sign-in, sign-out, saves) with 403, and logs a startup warning. May stay unset behind an HTTPS reverse proxy that preserves `Host`. Must be a bare `http(s)` origin (no path or credentials), or the frontend does not start. Use the same value as `CSRF_ORIGIN`. |
+| `ORIGIN` | *(none)* | Public origin of the frontend, for example `http://192.168.1.10:3000`. **Required when serving plain HTTP**: without it the frontend assumes `https://<Host>` and rejects every write (sign-in, first-run setup, saves) with 403, and logs a startup warning. Leave it unset only behind an HTTPS reverse proxy that passes the original `Host`. Must be a bare `http(s)` origin (no path, query or credentials), or the frontend does not start. `CSRF_ORIGIN` defaults to it. |
 | `PUBLIC_API_URL` | *(empty)* | Leave empty to use the same-origin frontend API proxy. |
 | `INTERNAL_API_URL` | `http://localhost:8000` | Internal backend URL, derived from `BACKEND_PORT` by default. |
 | `SECURE_COOKIES` | `false` | Set to `true` when serving over HTTPS to enforce the Secure flag on cookies. |
-| `CSRF_ORIGIN` | *(none)* | Trusted origin for CSRF protection (e.g., `https://zondarr.example.com`). Required for HTTPS with a custom domain. |
+| `CSRF_ORIGIN` | `ORIGIN` *(if set)* | Trusted origin for CSRF protection. Defaults to `ORIGIN` when that is set; set it only to use a different origin. Without `ORIGIN`, set it to your public URL (e.g., `https://zondarr.example.com`). |
 | `PLEX_API_TIMEOUT_SECONDS` | `30` | Timeout in seconds for Plex API requests. Minimum: 5. Increase for slow/remote Plex servers. |
 | `GRANIAN_WORKERS` | `1` | Number of Granian worker processes. Keep at 1 for SQLite. Increase to match CPU cores when using PostgreSQL. |
+| `ADDRESS_HEADER`, `XFF_DEPTH` | *(none)*, `1` | Behind a reverse proxy, set `ADDRESS_HEADER=x-forwarded-for` (and `XFF_DEPTH` to the number of proxies) only when every request goes through that proxy, so the frontend sees the real client address. |
+| `PROTOCOL_HEADER`, `HOST_HEADER` | *(none)* | Only without `ORIGIN`, behind a trusted proxy that sets them. |
+| `SHUTDOWN_TIMEOUT` | `5` | Seconds the frontend waits for open requests when the container stops. The default lets a plain `docker stop` (10 s) finish cleanly; if you raise it, raise the stop timeout too (`docker stop -t`, `stop_grace_period`). |
 
 ## Ports
 
@@ -75,7 +78,7 @@ All persistent data is stored in `/config/data/`:
 - `.secret_key` — Auto-generated JWT signing key
 - `.bootstrap_token` — Persistent first-admin setup token
 
-Back up the entire `/config` volume before replacing the container. Preserve any explicitly supplied `SECRET_KEY`. The frontend setup page uses the bootstrap token for first-admin creation; only the frontend port needs publishing. Set `ORIGIN` and `CSRF_ORIGIN` to your public URL when serving plain HTTP or behind a reverse proxy that does not preserve `Host`, and enable `SECURE_COOKIES` for HTTPS.
+Back up the entire `/config` volume before replacing the container. Preserve any explicitly supplied `SECRET_KEY`. The frontend setup page uses the bootstrap token for first-admin creation; only the frontend port needs publishing. Set `ORIGIN` to your public URL when serving plain HTTP or behind a reverse proxy that does not preserve `Host` (`CSRF_ORIGIN` follows it), and enable `SECURE_COOKIES` for HTTPS.
 
 Database migrations (Alembic) run automatically on every container startup.
 
