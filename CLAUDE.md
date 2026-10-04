@@ -2,17 +2,19 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## This branch is a retained, frozen channel
+## This branch is the release channel
 
-`release` (the default branch) keeps historical packaging only. Its `call-build` and `call-update`
-workflows are disabled (see `README.md`), so a push here builds and publishes nothing, and the bot
-no longer refreshes `meta.json`. The maintained channel is `nightly`, which has diverged heavily
-(its own `ci.yml`, `tools/*.py` with tests, `packages.txt`, different Dockerfiles, and extra
-startup env such as `BOOTSTRAP_TOKEN` in `init-setup-app/run`). Packaging fixes meant to ship belong on `nightly`: run
-`git diff origin/release origin/nightly -- <path>` before porting anything in either direction.
+`release` (the default branch) builds the latest zondarr release tag; `nightly` builds every commit
+to zondarr's `main`. On both branches `call-build` builds and publishes an image on every push, and
+the hourly `call-update` refreshes `meta.json` and pushes, which triggers a build. Apart from the
+docs and `pullfrog.yml`, the branches differ only in `meta.json`'s channel values (`description`,
+`latest`, `version`, `version__command`) and the bot-managed `packages.txt`; the callers,
+`build.sh`, both Dockerfiles and the s6 tree under `root/` are the same. Packaging fixes belong on
+both branches: run `git diff origin/release origin/nightly -- <path>` before porting anything in
+either direction.
 
 Packaging only: both Dockerfiles download the app source from
-`https://github.com/engels74/zondarr/archive/${VERSION}.tar.gz` at build time. No app code lives here.
+`https://github.com/edbfi/zondarr/archive/${VERSION}.tar.gz` at build time. No app code lives here.
 
 ## Commands
 
@@ -31,11 +33,13 @@ commit it.
 
 ## meta.json
 
-- `build.sh` turns every key into an uppercase `--build-arg`. The Dockerfiles consume only
-  `VERSION`, `UPSTREAM_IMAGE` and `UPSTREAM_TAG_SHA` (plus `IMAGE_STATS`, which is not in
-  `meta.json`). A new build arg needs a lowercase key here plus an `ARG` in both Dockerfiles.
-- `<key>__command` is a shell probe whose output was written back to `<key>` by the update
-  workflow. `version` and `upstream_tag_sha` are resolved values: change the `__command`, not them.
+- `./build.sh amd64|arm64` turns every key except the `__command` keys into an uppercase
+  `--build-arg`. The Dockerfiles consume only `VERSION`, `UPSTREAM_IMAGE` and `UPSTREAM_TAG_SHA`
+  (plus `IMAGE_STATS`, which is not in `meta.json`). A new build arg needs a lowercase key here
+  plus an `ARG` in both Dockerfiles.
+- `<key>__command` is a shell probe whose output is written back to `<key>` by the hourly update
+  workflow (and by `./build.sh update`). `version` and `upstream_tag_sha` are resolved values:
+  change the `__command`, not them.
 
 ## Gotchas
 
@@ -44,7 +48,7 @@ commit it.
   lets `FROM ${UPSTREAM_IMAGE}:${UPSTREAM_TAG_SHA}` pass BuildKit's checks.
 - `APP_DIR`, `CONFIG_DIR`, `UMASK`, the `hotio` user, `/etc/s6-overlay/scripts/bash-functions`
   (`log_inf`) and the `init-setup`/`init-wireguard` services come from the base image
-  (`ghcr.io/engels74/base-image:alpinevpn`). Use those variables and helpers instead of redefining
+  (`ghcr.io/edbfi/base-image:alpinevpn`). Use those variables and helpers instead of redefining
   them or hardcoding paths.
 - A `oneshot`'s `export` never reaches later services. Persist values with
   `printf '%s' "${VAR}" > /var/run/s6/container_environment/VAR`, as `init-setup-app/run` does.
@@ -71,8 +75,8 @@ No `chmod` is needed, because the Dockerfiles `chmod +x` every `run*` under `s6-
 
 ## Reference
 
-- `README.md`: says this branch is retained and points to the maintained docs and the `nightly`
-  README. Read it before changing anything user-facing.
+- `README.md`: names the channels and points to the container docs and the `nightly` README.
+  Read it before changing anything user-facing.
 - `.github/workflows/call-*.yml` are thin callers into
-  `engels74/base-image/.github/workflows/*-on-call.yml@workflows`. Build, tag and publish logic
+  `edbfi/base-image/.github/workflows/*-on-call.yml@workflows`. Build, tag and publish logic
   lives there, not here. Read them before assuming how CI consumes `meta.json`.

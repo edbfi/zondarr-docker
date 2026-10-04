@@ -1,7 +1,7 @@
-# Zondarr Docker image — retained release channel
+# Zondarr Docker Image
 
-This branch retains historical packaging. Its legacy build and update workflows
-are disabled. The maintained build channel is `nightly`; do not treat a nightly
+Nightly builds from the latest commit on `main`. The `release` branch builds the
+latest zondarr release tag; none has been published yet. Do not treat a nightly
 image as a stable release.
 
 For current installation instructions, Docker Compose examples and published
