@@ -8,9 +8,9 @@ cd "${APP_DIR}/backend" || exit 1
 # Keep --workers-kill-timeout small: 4 s plus the s6 teardown (about 3.3 s) fits Docker's
 # default 10 s stop timeout when a client holds a connection open on this port.
 exec s6-setuidgid hotio \
-    "${APP_DIR}/backend/.venv/bin/python" -m granian \
-    zondarr.app:app \
-    --interface asgi \
+    "${APP_DIR}/backend/.venv/bin/python" -m litestar \
+    --app zondarr.app:app \
+    run \
     --host 0.0.0.0 \
     --port "${BACKEND_PORT}" \
     --workers "${GRANIAN_WORKERS:-1}" \
@@ -19,4 +19,4 @@ exec s6-setuidgid hotio \
     --respawn-failed-workers \
     --workers-kill-timeout 4 \
     --workers-lifetime 6h \
-    --log-level info
+    --granian-log-level info
