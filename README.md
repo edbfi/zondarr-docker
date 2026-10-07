@@ -4,6 +4,11 @@ Nightly builds from the latest commit on `main`. The `release` branch builds the
 latest zondarr release tag; none has been published yet. Do not treat a nightly
 image as a stable release.
 
+The release channel follows the app's latest published, non-prerelease GitHub
+Release with a plain `X.Y.Z` tag (release titles may say `v`). Publish only an
+owner-approved, tested commit from `main`; never move a published tag. A bare
+tag does not publish anything.
+
 For current installation instructions, Docker Compose examples and published
 image tags, use the [Zondarr container documentation](https://web.edb.fi/containers/zondarr/)
 and the [nightly README](https://github.com/edbfi/zondarr-docker/blob/nightly/README.md).
