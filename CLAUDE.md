@@ -15,9 +15,8 @@ as the latest release" unchecked, or `release` moves back to that version. On bo
 `pullfrog.yml` and `immortality.yml` (both only on `release`), the branches differ only in
 `meta.json`'s channel values (`description`, `latest`, `version`, `version__command`) and the
 bot-managed `packages.txt`; the callers, `build.sh`, both Dockerfiles and the s6 tree under
-`root/` are the same. Packaging fixes
-belong on both branches: run `git diff origin/release origin/nightly -- <path>` before porting
-anything in either direction.
+`root/` are the same. Packaging fixes belong on both branches: run
+`git diff origin/release origin/nightly -- <path>` before porting anything in either direction.
 
 Packaging only: both Dockerfiles download the app source from
 `https://github.com/edbfi/zondarr/archive/${VERSION}.tar.gz` at build time. No app code lives here.
