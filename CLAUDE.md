@@ -4,14 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## This branch is the release channel
 
-`release` (the default branch) builds the latest zondarr release tag; `nightly` builds every commit
-to zondarr's `main`. On both branches `call-build` builds and publishes an image on every push, and
-the hourly `call-update` refreshes `meta.json` and pushes, which triggers a build. zondarr has no
-release tag yet, so on `release` `version` stays `"null"`, `version__command` finds nothing and
-every `call-build` run fails at `archive/null.tar.gz`; that is expected until the first tag. Apart
-from the docs and `pullfrog.yml`, the branches differ only in `meta.json`'s channel values
-(`description`, `latest`, `version`, `version__command`) and the bot-managed `packages.txt`; the
-callers, `build.sh`, both Dockerfiles and the s6 tree under `root/` are the same. Packaging fixes
+`release` (the default branch) builds zondarr's latest published, non-prerelease GitHub Release
+with a plain `X.Y.Z` tag (`version__command` reads `releases/latest`, so a bare tag publishes
+nothing); `nightly` builds every commit to zondarr's `main`. Publish a backport release with "Set
+as the latest release" unchecked, or `release` moves back to that version. On both branches
+`call-build` builds and publishes an image on every push, and the hourly `call-update` refreshes
+`meta.json` and pushes, which triggers a build. zondarr has no such release yet, so on `release`
+`releases/latest` answers 404, `version` stays `"null"` and every `call-build` run fails at
+`archive/null.tar.gz`; that is expected until the first release. Apart from the docs,
+`pullfrog.yml` and `immortality.yml` (both only on `release`), the branches differ only in
+`meta.json`'s channel values (`description`, `latest`, `version`, `version__command`) and the
+bot-managed `packages.txt`; the callers, `build.sh`, both Dockerfiles and the s6 tree under
+`root/` are the same. Packaging fixes
 belong on both branches: run `git diff origin/release origin/nightly -- <path>` before porting
 anything in either direction.
 
