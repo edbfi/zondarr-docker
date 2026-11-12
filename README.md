@@ -1,4 +1,23 @@
-# Zondarr Docker Image
+<p align="center">
+  <!-- Logo copied verbatim from https://github.com/edbfi/repo-patches/blob/cf9cf0d625c8c7b02982c6453d899c1c2c0fb1a6/hweb-content/assets/img/image-logos/zondarr.svg -->
+  <img src="docs/assets/zondarr-docker-logo.svg" alt="zondarr-docker logo" width="256" height="256">
+</p>
+
+<h1 align="center">zondarr-docker</h1>
+
+<p align="center"><strong>Multi-architecture Docker packaging for Zondarr.</strong></p>
+
+<p align="center">
+  <a href="https://github.com/edbfi/zondarr-docker/blob/release/LICENSE" title="Docker packaging license">
+    <img src="https://img.shields.io/badge/License%20(Image)-GPL--3.0-orange?style=flat" alt="Docker packaging license: GPL-3.0">
+  </a>
+  <a href="https://github.com/moby/moby" title="Moby source, Docker Engine's open-source foundation">
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&amp;logo=docker&amp;logoColor=white" alt="Docker">
+  </a>
+  <a href="https://git.savannah.gnu.org/cgit/bash.git/" title="GNU Bash source">
+    <img src="https://img.shields.io/badge/Bash-4EAA25?style=flat&amp;logo=gnubash&amp;logoColor=white" alt="Bash">
+  </a>
+</p>
 
 Nightly builds from the latest commit on `main`. The `release` branch builds the
 latest zondarr release tag; none has been published yet. Do not treat a nightly
