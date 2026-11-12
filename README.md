@@ -1,6 +1,5 @@
 <p align="center">
-  <!-- Logo copied verbatim from https://github.com/edbfi/repo-patches/blob/cf9cf0d625c8c7b02982c6453d899c1c2c0fb1a6/hweb-content/assets/img/image-logos/zondarr.svg -->
-  <img src="docs/assets/zondarr-docker-logo.svg" alt="zondarr-docker logo" width="256" height="256">
+  <img src="docs/assets/zondarr-docker-logo.svg" alt="zondarr-docker logo" width="160" height="155">
 </p>
 
 <h1 align="center">zondarr-docker</h1>
@@ -21,14 +20,16 @@
 
 <p align="center">
   <a href="https://github.com/edbfi/zondarr/blob/main/LICENSE" title="Zondarr application license">
-    <img src="https://img.shields.io/badge/License%20(App)-AGPL--3.0--only-blue?style=flat" alt="Zondarr application license: AGPL-3.0-only">
+    <img src="https://img.shields.io/badge/License%20(App)-AGPL--3.0--or--later-blue?style=flat" alt="Zondarr application license: AGPL-3.0-or-later">
   </a>
   <a href="https://github.com/edbfi/zondarr/stargazers"><img src="https://img.shields.io/github/stars/edbfi/zondarr.svg?style=flat" alt="GitHub Stars"></a>
 </p>
 
 ## About
 
-Zondarr is a full-stack application with a Python/Litestar backend and SvelteKit/Bun frontend. This Docker image runs both services using s6-overlay process supervision.
+Docker packaging for [Zondarr](https://github.com/edbfi/zondarr), running its backend and frontend with s6-overlay.
+
+[Documentation and examples](https://web.edb.fi/containers/zondarr/).
 
 Nightly builds from the latest commit on `main`. The `release` branch builds the latest zondarr release tag; none has been published yet.
 
@@ -109,4 +110,4 @@ To build locally, run `./build.sh amd64` or `./build.sh arm64` from the reposito
 ## License
 
 - **Docker Image**: Licensed under the GPL-3.0 License. See the [LICENSE](https://github.com/edbfi/zondarr-docker/blob/nightly/LICENSE) file for details.
-- **Zondarr Application**: Licensed under the AGPL-3.0 License. See the [zondarr repository](https://github.com/edbfi/zondarr) for details.
+- **Zondarr Application**: Licensed under the AGPL-3.0-or-later License. See the [zondarr repository](https://github.com/edbfi/zondarr) for details.
