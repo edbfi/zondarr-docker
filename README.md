@@ -1,6 +1,5 @@
 <p align="center">
-  <!-- Logo copied verbatim from https://github.com/edbfi/repo-patches/blob/cf9cf0d625c8c7b02982c6453d899c1c2c0fb1a6/hweb-content/assets/img/image-logos/zondarr.svg -->
-  <img src="docs/assets/zondarr-docker-logo.svg" alt="zondarr-docker logo" width="256" height="256">
+  <img src="docs/assets/zondarr-docker-logo.svg" alt="zondarr-docker logo" width="160" height="155">
 </p>
 
 <h1 align="center">zondarr-docker</h1>
@@ -19,6 +18,12 @@
   </a>
 </p>
 
+Docker packaging for [Zondarr](https://github.com/edbfi/zondarr), running its backend and frontend with s6-overlay.
+
+[Documentation and examples](https://web.edb.fi/containers/zondarr/).
+See the [nightly README](https://github.com/edbfi/zondarr-docker/blob/nightly/README.md)
+for nightly instructions.
+
 Nightly builds from the latest commit on `main`. The `release` branch builds the
 latest zondarr release tag; none has been published yet. Do not treat a nightly
 image as a stable release.
@@ -27,12 +32,6 @@ The release channel follows the app's latest published, non-prerelease GitHub
 Release with a plain `X.Y.Z` tag (release titles may say `v`). Publish only an
 owner-approved, tested commit from `main`; never move a published tag. A bare
 tag does not publish anything.
-
-For current installation instructions, Docker Compose examples and published
-image tags, use the [Zondarr container documentation](https://web.edb.fi/containers/zondarr/)
-and the [nightly README](https://github.com/edbfi/zondarr-docker/blob/nightly/README.md).
-The historical Compose example has been removed to avoid recommending obsolete
-image names and runtime settings.
 
 Images built from a Zondarr version on SvelteKit 3 start the frontend through
 `scripts/serve.ts`. Set `ORIGIN` to the address people open in the browser, for
@@ -53,4 +52,4 @@ finishes cleanly; if you raise it, raise the stop timeout too (`docker stop -t`,
 ## License
 
 - Docker packaging: [GPL-3.0 license](LICENSE).
-- Application: [AGPL-3.0 source repository](https://github.com/edbfi/zondarr).
+- Application: [AGPL-3.0-or-later source repository](https://github.com/edbfi/zondarr).
